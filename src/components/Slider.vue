@@ -1,8 +1,24 @@
 <template>
-<div class="text-white">{{ range }}</div>
-<div id='track'>
-  <div id="knob"></div>
-</div>
+<div class="text-white">{{ position }}</div>
+<div
+  class="handler"
+  draggable="true"
+  @drag="handleDrag"
+  @dragstart="handleDragStart"
+  @dragend="handleDragEnd"
+  @drop="handleDragEnd"
+/>
+
+<div
+  class="text-white w-5 h-5 bg-green-700"
+  draggable="true"
+  @drag="handleDrag"
+  @dragstart="handleDragStart"
+  :style="{
+    transform: `translate(${position.x}px, ${position.y}px`
+  }"
+/>
+
 <div class="slider-container" ref="track">
   <div class="color-bg" />
   <div class="color-bar" />
@@ -13,10 +29,6 @@
     @drag="handleDrag"
     @dragstart="handleDragStart"
   />
-</div>
-<div class="w-full relative flex items-center">
-  <div class="color-bar" />
-  <input ref="slider" type="range" v-model="position">
 </div>
 </template>
 
@@ -33,57 +45,26 @@ export default {
   },
   data() {
     return {
-      position: 0,
+      position: { x: 0, y: 0 },
     };
-  },
-  mounted() {
-    this.$nextTick(() => {
-      this.setSlider();
-    });
   },
   methods: {
     handleDragStart($event) {
       console.log('start', $event);
     },
     handleDrag($event) {
-      console.log('drag', $event);
+      const { position } = this;
+      console.log('drag', $event.pageX, $event.offsetX, $event.x, $event.clientX, position);
+      position.x = ($event.pageX);
+      // position.y = ($event.offsetY);
+      // const { target } = $event;
+      // target.style.transform = `translate(${position.x}px, ${position.y}px)`;
     },
-    setSlider() {
-      if (typeof window === 'undefined') return;
-      let dragging = false;
-      let knobOffset = 0;
-      const { track } = this.$refs;
-      const { knob } = this.$refs;
-      const trackWidth = track.offsetWidth;
-      const trackLeft = track.offsetLeft;
-      // const trackRight = trackLeft + trackWidth;
-
-      const knobWidth = knob.offsetWidth;
-      const maxRight = trackWidth - knobWidth; // relatively to track
-
-      knob.addEventListener('mousedown', (e) => {
-        // knob offset relatively to track
-        knobOffset = e.clientX - knob.offsetLeft;
-        dragging = true;
-      });
-
-      window.addEventListener('mouseup', () => {
-        dragging = false;
-      });
-
-      window.addEventListener('mousemove', (e) => {
-        if (dragging) {
-          // current knob offset, relative to track
-          let offset = e.clientX - trackLeft - knobOffset;
-          if (offset < 0) {
-            offset = 0;
-          } else if (offset > maxRight) {
-            offset = maxRight;
-          }
-
-          knob.style.left = `${offset}px`;
-        }
-      });
+    handleDragEnd($event) {
+      console.log('over', $event);
+      const { position } = this;
+      const { target } = $event;
+      target.style.transform = `translate(${position.x}px, ${position.y}px)`;
     },
   },
 };
@@ -101,7 +82,9 @@ export default {
   background: #1B1B1B;
   z-index: 2;
   /*left: 50%;*/
-  transform: translateX(-16px);
+  /*transform: translateX(-16px);*/
+  touch-action: none;
+  user-select: none;
 }
 .color-bg {
   @apply rounded-full absolute top-1/2 w-full;
@@ -138,7 +121,4 @@ input::-moz-range-thumb {
   border: 6px solid #FFD05D;
   background: #1B1B1B;
 }
-
-#track {width: 200px;height: 5px; margin:100px; background: red}
-#knob {height: 10px; width: 40px; background: yellow;position: relative; }
 </style>
