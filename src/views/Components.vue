@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="max-w-2xl mx-auto">
   <h1 class="text-white">Component</h1>
   <h2 class="text-white">Button</h2>
   <div>
@@ -12,6 +12,9 @@
   <div>
     <Input placeholder="keyword" />
   </div>
+  <div class="mt-10">
+    <Slider />
+  </div>
 </div>
 </template>
 
@@ -19,10 +22,13 @@
 import ButtonNormal from '../components/ButtonNormal.vue';
 import ButtonSmall from '../components/ButtonSmall.vue';
 import Input from '../components/Input.vue';
+import Slider from '../components/Slider.vue';
 
 export default {
   name: 'Components',
-  components: { ButtonNormal, ButtonSmall, Input },
+  components: {
+    ButtonNormal, ButtonSmall, Input, Slider,
+  },
 };
 </script>
 
