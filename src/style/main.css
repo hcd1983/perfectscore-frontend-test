@@ -2,5 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 body{
-    @apply bg-black;
+    @apply font-ubuntu;
+    background-color: #121212;
+}
+
+h1 {
+    @apply font-ubuntu font-bold;
+    font-style: normal;
+    font-size: 30px;
+    line-height: 150%;
+    letter-spacing: 0.25px;
+}
+
+h2 {
+    @apply font-ubuntu font-medium;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 150%;
 }
