@@ -3,12 +3,12 @@
     <div class="h2 text-white">Search</div>
     <Input v-model="keyWord" />
     <div class="h2 text-white"># of results per page</div>
-    <div class="h2 text-white">{{ keyWord }}</div>
+    <div class="h2 text-white">{{ keyword }}</div>
     <div class="text-white">
       <span>30</span> <span>result</span>
     </div>
-    <slider v-model:value="perPage" />
-    <ButtonNormal>Search</ButtonNormal>
+    <slider v-model:value="pageSize" />
+    <ButtonNormal @click="handleSubmit">Search</ButtonNormal>
   </div>
 </template>
 
@@ -26,9 +26,15 @@ export default {
   },
   data() {
     return {
-      perPage: 15,
-      keyWord: '',
+      pageSize: 15,
+      keyword: '',
     };
+  },
+  methods: {
+    handleSubmit() {
+      console.log('submit');
+      this.$router.push({ name: 'search', query: { } });
+    },
   },
 };
 </script>
