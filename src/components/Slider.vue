@@ -35,6 +35,9 @@
     <div
       v-for="(val, idx) in values" :key="idx"
       class="absolute w-0 h-0 top-full flex items-center justify-center text-white z-10"
+      :class="{
+        'opacity-50' : this.value !== val
+      }"
       :style="{
         left: `${idx > 0 ? rangesModified[idx-1].position : 0}%`,
       }"
