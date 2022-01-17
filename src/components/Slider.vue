@@ -17,9 +17,13 @@
     <div
       ref="thumb"
       class="handler"
+      :class="{
+        'transform translate-x-3': this.value === this.values[0],
+        'transform -translate-x-4': this.value === this.values[this.values.length - 1]
+      }"
       :style="{
-      left : `${offsetDistance}%`
-    }"
+        left : `${offsetDistance}%`
+      }"
     >
       <span
         @mousedown="handleMouseDown"
