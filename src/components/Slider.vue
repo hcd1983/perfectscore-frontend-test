@@ -1,13 +1,17 @@
 <template>
 <div>
-  <div class="slider-container" ref="slider">
+  <div
+    class="slider-container"
+    ref="slider"
+    @click="handleBarClick($event)"
+  >
     <div class="color-bg" />
     <div
       class="color-bar"
     >
       <span
         :style="{
-          width: `${offset}px`
+          width: `${offsetDistance}%`
         }"
       />
     </div>
@@ -18,22 +22,22 @@
       @mousedown="handleMouseDown"
       @mouseup="handleMouseUp"
       :style="{
-      left : `${offset}px`
+      left : `${offsetDistance}%`
     }"
     />
   </div>
-  <div class="scales w-full flex">
+  <div
+    class="scales w-full relative h-7"
+    @click="handleBarClick($event)"
+  >
     <div
-      v-for="(range, idx) in rangesModified" :key="idx"
-      class="flex mt-5 justify-between"
-      :style="{width: `${range}%`}"
+      v-for="(val, idx) in values" :key="idx"
+      class="absolute w-0 h-0 top-full flex items-center justify-center text-white z-10"
+      :style="{
+        left: `${idx > 0 ? rangesModified[idx-1].position : 0}%`,
+      }"
     >
-      <div class="scale text-white flex items-center justify-center">{{ values[idx] }}</div>
-      <div
-        v-if="idx === range.length - 1"
-        class="scale text-white flex items-center justify-center">
-          {{ values[idx+1] }}
-      </div>
+      <span class="cursor-pointer" @click.stop="setValue(val)">{{ val }}</span>
     </div>
   </div>
 </div>
@@ -52,7 +56,7 @@ export default {
   },
   data() {
     return {
-      value: 5,
+      value: 12,
       position: { x: 0, y: 0 },
       offset: 50,
       values: [3, 6, 9, 12, 15, 50],
@@ -62,10 +66,22 @@ export default {
   computed: {
     rangesModified() {
       const total = this.ranges.reduce((a, b) => a + b);
-      return this.ranges.map((range) => ((range / total) * 100).toFixed(2));
+      let position = 0;
+      return this.ranges.map((_range) => {
+        const range = ((_range / total) * 100).toFixed(2);
+        position += Number(range);
+        return {
+          range,
+          position: Number(position.toFixed(2)),
+        };
+      });
     },
-    ddd() {
-      return this.$refs.slider.offsetWidth;
+    offsetDistance() {
+      const targetIndex = this.values.indexOf(this.value);
+      const total = this.ranges.reduce((a, b) => a + b);
+      if (targetIndex === 0) return 0;
+      return (this.ranges.slice(0, targetIndex).reduce((a, b) => a + b, 0) / total) * 100
+        .toFixed(2);
     },
   },
   methods: {
@@ -76,24 +92,6 @@ export default {
       // shiftY not needed, the thumb moves only horizontally
 
       const onMouseMove = (_event) => {
-        // const elemBelow = document.elementFromPoint(_event.clientX + 5, _event.clientY + 20);
-        // if (!elemBelow) return;
-        // // potential droppables are labeled with the class "droppable" (can be other logic)
-        // const droppableBelow = elemBelow.closest('.scale');
-        // console.log('elemBelow', elemBelow, droppableBelow.getBoundingClientRect());
-        // if (droppableBelow) {
-        //   let newLeft = droppableBelow.getBoundingClientRect().x
-        //     - shiftX - slider.getBoundingClientRect().left;
-        //   if (newLeft < 0) {
-        //     newLeft = 0;
-        //   }
-        //   const rightEdge = slider.offsetWidth - thumb.offsetWidth;
-        //   if (newLeft > rightEdge) {
-        //     newLeft = rightEdge;
-        //   }
-        //   this.offset = newLeft;
-        // }
-        // ======
         let newLeft = _event.clientX - shiftX - slider.getBoundingClientRect().left;
         // the pointer is out of slider => lock the thumb within the bounaries
         if (newLeft < 0) {
@@ -127,6 +125,19 @@ export default {
           this.offset = 0;
         }
       }, 1000);
+    },
+    handleBarClick(e) {
+      e.preventDefault();
+      const { slider } = this.$refs;
+      const left = ((e.clientX - slider.getBoundingClientRect().left) / slider.offsetWidth) * 100;
+      const targetIndex = this.rangesModified.findIndex((range) => Number(range.position) > left);
+      // const value = this.value < this.values[targetIndex + 1]
+      //   ? this.values[targetIndex + 1] : this.values[targetIndex];
+      this.setValue(this.values[targetIndex + 1]);
+    },
+    setValue(value) {
+      this.$emit('input', value);
+      this.value = value;
     },
   },
 };
@@ -183,5 +194,13 @@ export default {
   right:0;
   bottom:0;
   background-image: linear-gradient(to right, #FFD25F, #FF5C01);
+}
+.scales > div:first-child {
+  @apply transform translate-x-1 justify-start;
+}
+
+.scales > div:last-child {
+  @apply transform -translate-x-1 right-0 justify-end;
+  left: auto !important;
 }
 </style>
