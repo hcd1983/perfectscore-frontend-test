@@ -1,9 +1,8 @@
 <template>
   <div>
     <div class="h2 text-white">Search</div>
-    <Input v-model="keyWord" />
+    <Input v-model="keyword" />
     <div class="h2 text-white"># of results per page</div>
-    <div class="h2 text-white">{{ keyword }}</div>
     <div class="text-white">
       <span>30</span> <span>result</span>
     </div>
@@ -32,8 +31,9 @@ export default {
   },
   methods: {
     handleSubmit() {
+      const { pageSize, keyword } = this;
       console.log('submit');
-      this.$router.push({ name: 'search', query: { } });
+      this.$router.push({ name: 'search', query: { pageSize, keyword } });
     },
   },
 };
