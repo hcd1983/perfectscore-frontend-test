@@ -27,7 +27,7 @@
     >
       <span
         @mousedown="handleMouseDown"
-        @mouseup="handleMouseUp"
+        @touchstart="handleTouchStart"
       />
     </div>
   </div>
@@ -100,22 +100,11 @@ export default {
   },
   methods: {
     handleMouseDown(event) {
-      const { slider, thumb } = this.$refs;
+      const { slider } = this.$refs;
       event.preventDefault(); // prevent selection start (browser action)
-      const shiftX = event.clientX - thumb.getBoundingClientRect().left;
       // shiftY not needed, the thumb moves only horizontally
 
       const onMouseMove = (_event) => {
-        let newLeft = _event.clientX - shiftX - slider.getBoundingClientRect().left;
-        // the pointer is out of slider => lock the thumb within the bounaries
-        if (newLeft < 0) {
-          newLeft = 0;
-        }
-        const rightEdge = slider.offsetWidth - thumb.offsetWidth;
-        if (newLeft > rightEdge) {
-          newLeft = rightEdge;
-        }
-
         // eslint-disable-next-line max-len
         let left = ((_event.clientX - slider.getBoundingClientRect().left) / slider.offsetWidth) * 100;
         if (left < 0) left = 0;
@@ -126,7 +115,6 @@ export default {
         // eslint-disable-next-line max-len
         const value = left - leftSide < rightSide - left ? this.values[targetIndex] : this.values[targetIndex + 1];
         this.setValue(value);
-        this.offset = newLeft;
       };
 
       const onMouseUp = () => {
@@ -138,18 +126,32 @@ export default {
       document.addEventListener('mousemove', onMouseMove);
       document.addEventListener('mouseup', onMouseUp);
     },
-    handleMouseUp() {
+    handleTouchStart(event) {
+      console.log('t-start');
       const { slider } = this.$refs;
-      window.slider = slider;
-      setTimeout(() => {
-        // alert('works');
-        const proportion = ((this.offset / slider.offsetWidth) * 100).toFixed(2);
-        if (proportion > 50) {
-          this.offset = slider.offsetWidth * 0.5;
-        } else {
-          this.offset = 0;
-        }
-      }, 1000);
+      event.preventDefault(); // prevent selection start (browser action)
+      const onTouchMove = (_event) => {
+        window.tEvent = _event;
+        // eslint-disable-next-line max-len
+        let left = ((_event.touches[0].clientX - slider.getBoundingClientRect().left) / slider.offsetWidth) * 100;
+        if (left < 0) left = 0;
+        if (left > 100) left = 100;
+        const targetIndex = this.rangesModified.findIndex((range) => range.position >= left);
+        const leftSide = targetIndex === 0 ? 0 : this.rangesModified[targetIndex - 1].position;
+        const rightSide = this.rangesModified[targetIndex].position;
+        // eslint-disable-next-line max-len
+        const value = left - leftSide < rightSide - left ? this.values[targetIndex] : this.values[targetIndex + 1];
+        this.setValue(value);
+      };
+
+      const onTouchEnd = () => {
+        // this.handleMouseUp();
+        document.removeEventListener('touchend', onTouchEnd);
+        document.removeEventListener('touchmove', onTouchMove);
+      };
+
+      document.addEventListener('touchmove', onTouchMove);
+      document.addEventListener('touchend', onTouchEnd);
     },
     setValue(value) {
       this.$emit('update:value', value);
