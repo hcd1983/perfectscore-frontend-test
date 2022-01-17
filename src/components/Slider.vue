@@ -18,13 +18,15 @@
     <div
       ref="thumb"
       class="handler"
-      draggable="true"
-      @mousedown="handleMouseDown"
-      @mouseup="handleMouseUp"
       :style="{
       left : `${offsetDistance}%`
     }"
-    />
+    >
+      <span
+        @mousedown="handleMouseDown"
+        @mouseup="handleMouseUp"
+      />
+    </div>
   </div>
   <div
     class="scales w-full relative h-7"
@@ -67,9 +69,9 @@ export default {
     rangesModified() {
       const total = this.ranges.reduce((a, b) => a + b);
       let position = 0;
-      return this.ranges.map((_range) => {
+      return this.ranges.map((_range, idx) => {
         const range = ((_range / total) * 100).toFixed(2);
-        position += Number(range);
+        position = idx === this.ranges.length - 1 ? 100 : position + Number(range);
         return {
           range,
           position: Number(position.toFixed(2)),
@@ -101,6 +103,17 @@ export default {
         if (newLeft > rightEdge) {
           newLeft = rightEdge;
         }
+
+        // eslint-disable-next-line max-len
+        let left = ((_event.clientX - slider.getBoundingClientRect().left) / slider.offsetWidth) * 100;
+        if (left < 0) left = 0;
+        if (left > 100) left = 100;
+        const targetIndex = this.rangesModified.findIndex((range) => range.position >= left);
+        const leftSide = targetIndex === 0 ? 0 : this.rangesModified[targetIndex - 1].position;
+        const rightSide = this.rangesModified[targetIndex].position;
+        // eslint-disable-next-line max-len
+        const value = left - leftSide < rightSide - left ? this.values[targetIndex] : this.values[targetIndex + 1];
+        this.setValue(value);
         this.offset = newLeft;
       };
 
@@ -128,6 +141,7 @@ export default {
     },
     handleBarClick(e) {
       e.preventDefault();
+      if (1 < 2) return;
       const { slider } = this.$refs;
       const left = ((e.clientX - slider.getBoundingClientRect().left) / slider.offsetWidth) * 100;
       const targetIndex = this.rangesModified.findIndex((range) => Number(range.position) > left);
@@ -145,19 +159,17 @@ export default {
 
 <style scoped>
 .slider-container{
-  @apply relative flex items-center;
+  @apply relative flex items-center z-20;
   width: calc(100% + 8px);
   transform: translateX(-4px);
 }
 .handler{
-  @apply w-0 h-0 relative;
+  @apply w-0 h-0 relative z-30;
 }
-.handler:before {
-  @apply rounded-full w-5 h-5 absolute box-content;
-  content: "";
+.handler span {
+  @apply rounded-full w-5 h-5 absolute box-content cursor-pointer;
   border: 6px solid #FFD05D;
   background: #1B1B1B;
-  z-index: 2;
   /*left: 50%;*/
   /*transform: translateX(-16px);*/
   touch-action: none;
