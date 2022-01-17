@@ -3,7 +3,6 @@
   <div
     class="slider-container"
     ref="slider"
-    @click="handleBarClick($event)"
   >
     <div class="color-bg" />
     <div
@@ -30,7 +29,6 @@
   </div>
   <div
     class="scales w-full relative h-7"
-    @click="handleBarClick($event)"
   >
     <div
       v-for="(val, idx) in values" :key="idx"
@@ -52,20 +50,27 @@
 export default {
   name: 'Slider',
   props: {
-    range: {
+    ranges: {
       type: Array,
       default() {
-        return [];
+        return [1, 1, 1, 1, 1.33];
       },
+    },
+    values: {
+      type: Array,
+      default() {
+        return [3, 6, 9, 12, 15, 50];
+      },
+    },
+    value: {
+      type: Number,
+      required: true,
     },
   },
   data() {
     return {
-      value: 12,
       position: { x: 0, y: 0 },
       offset: 50,
-      values: [3, 6, 9, 12, 15, 50],
-      ranges: [1, 1, 1, 1, 1.33],
     };
   },
   computed: {
@@ -142,19 +147,8 @@ export default {
         }
       }, 1000);
     },
-    handleBarClick(e) {
-      e.preventDefault();
-      if (1 < 2) return;
-      const { slider } = this.$refs;
-      const left = ((e.clientX - slider.getBoundingClientRect().left) / slider.offsetWidth) * 100;
-      const targetIndex = this.rangesModified.findIndex((range) => Number(range.position) > left);
-      // const value = this.value < this.values[targetIndex + 1]
-      //   ? this.values[targetIndex + 1] : this.values[targetIndex];
-      this.setValue(this.values[targetIndex + 1]);
-    },
     setValue(value) {
-      this.$emit('input', value);
-      this.value = value;
+      this.$emit('update:value', value);
     },
   },
 };

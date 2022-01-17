@@ -13,7 +13,7 @@
       <Input placeholder="keyword" />
     </div>
     <div class="mt-10">
-      <Slider />
+      <Slider v-model:value="sliderVal" />
     </div>
   </div>
 </template>
@@ -28,6 +28,11 @@ export default {
   name: 'Components',
   components: {
     ButtonNormal, ButtonSmall, Input, Slider,
+  },
+  data() {
+    return {
+      sliderVal: 12,
+    };
   },
 };
 </script>
