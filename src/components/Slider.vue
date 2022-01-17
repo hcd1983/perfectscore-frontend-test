@@ -1,34 +1,38 @@
 <template>
-<div class="text-white">{{ position }}</div>
-<div
-  class="handler"
-  draggable="true"
-  @drag="handleDrag"
-  @dragstart="handleDragStart"
-  @dragend="handleDragEnd"
-  @drop="handleDragEnd"
-/>
-
-<div
-  class="text-white w-5 h-5 bg-green-700"
-  draggable="true"
-  @drag="handleDrag"
-  @dragstart="handleDragStart"
-  :style="{
-    transform: `translate(${position.x}px, ${position.y}px`
-  }"
-/>
-
-<div class="slider-container" ref="track">
-  <div class="color-bg" />
-  <div class="color-bar" />
-  <div
-    ref="knob"
-    class="handler"
-    draggable="true"
-    @drag="handleDrag"
-    @dragstart="handleDragStart"
-  />
+<div>
+  <div class="slider-container" ref="slider">
+    <div class="color-bg" />
+    <div
+      class="color-bar"
+      :style="{
+      width : `${offset}px`
+    }"
+    />
+    <div
+      ref="thumb"
+      class="handler"
+      draggable="true"
+      @mousedown="handleMouseDown"
+      @mouseup="handleMouseUp"
+      :style="{
+      left : `${offset}px`
+    }"
+    />
+  </div>
+  <div class="scales w-full flex">
+    <div
+      v-for="(range, idx) in rangesModified" :key="idx"
+      class="flex mt-5 justify-between"
+      :style="{width: `${range}%`}"
+    >
+      <div class="scale text-white flex items-center justify-center">{{ values[idx] }}</div>
+      <div
+        v-if="idx === range.length - 1"
+        class="scale text-white flex items-center justify-center">
+          {{ values[idx+1] }}
+      </div>
+    </div>
+  </div>
 </div>
 </template>
 
@@ -46,25 +50,76 @@ export default {
   data() {
     return {
       position: { x: 0, y: 0 },
+      offset: 50,
+      values: [3, 6, 9, 12, 15, 50],
+      ranges: [1, 1, 1, 1, 1.33],
     };
   },
+  computed: {
+    rangesModified() {
+      const total = this.ranges.reduce((a, b) => a + b);
+      return this.ranges.map((range) => ((range / total) * 100).toFixed(2));
+    },
+  },
   methods: {
-    handleDragStart($event) {
-      console.log('start', $event);
+    handleMouseDown(event) {
+      const { slider, thumb } = this.$refs;
+      event.preventDefault(); // prevent selection start (browser action)
+      const shiftX = event.clientX - thumb.getBoundingClientRect().left;
+      // shiftY not needed, the thumb moves only horizontally
+
+      const onMouseMove = (_event) => {
+        // const elemBelow = document.elementFromPoint(_event.clientX + 5, _event.clientY + 20);
+        // if (!elemBelow) return;
+        // // potential droppables are labeled with the class "droppable" (can be other logic)
+        // const droppableBelow = elemBelow.closest('.scale');
+        // console.log('elemBelow', elemBelow, droppableBelow.getBoundingClientRect());
+        // if (droppableBelow) {
+        //   let newLeft = droppableBelow.getBoundingClientRect().x
+        //     - shiftX - slider.getBoundingClientRect().left;
+        //   if (newLeft < 0) {
+        //     newLeft = 0;
+        //   }
+        //   const rightEdge = slider.offsetWidth - thumb.offsetWidth;
+        //   if (newLeft > rightEdge) {
+        //     newLeft = rightEdge;
+        //   }
+        //   this.offset = newLeft;
+        // }
+        // ======
+        let newLeft = _event.clientX - shiftX - slider.getBoundingClientRect().left;
+        // the pointer is out of slider => lock the thumb within the bounaries
+        if (newLeft < 0) {
+          newLeft = 0;
+        }
+        const rightEdge = slider.offsetWidth - thumb.offsetWidth;
+        if (newLeft > rightEdge) {
+          newLeft = rightEdge;
+        }
+        this.offset = newLeft;
+      };
+
+      const onMouseUp = () => {
+        this.handleMouseUp();
+        document.removeEventListener('mouseup', onMouseUp);
+        document.removeEventListener('mousemove', onMouseMove);
+      };
+
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
     },
-    handleDrag($event) {
-      const { position } = this;
-      console.log('drag', $event.pageX, $event.offsetX, $event.x, $event.clientX, position);
-      position.x = ($event.pageX);
-      // position.y = ($event.offsetY);
-      // const { target } = $event;
-      // target.style.transform = `translate(${position.x}px, ${position.y}px)`;
-    },
-    handleDragEnd($event) {
-      console.log('over', $event);
-      const { position } = this;
-      const { target } = $event;
-      target.style.transform = `translate(${position.x}px, ${position.y}px)`;
+    handleMouseUp() {
+      const { slider } = this.$refs;
+      window.slider = slider;
+      setTimeout(() => {
+        // alert('works');
+        const proportion = ((this.offset / slider.offsetWidth) * 100).toFixed(2);
+        if (proportion > 50) {
+          this.offset = slider.offsetWidth * 0.5;
+        } else {
+          this.offset = 0;
+        }
+      }, 1000);
     },
   },
 };
@@ -77,7 +132,11 @@ export default {
   transform: translateX(-4px);
 }
 .handler{
-  @apply rounded-full w-5 h-5 relative box-content;
+  @apply w-0 h-0 relative;
+}
+.handler:before {
+  @apply rounded-full w-5 h-5 absolute box-content;
+  content: "";
   border: 6px solid #FFD05D;
   background: #1B1B1B;
   z-index: 2;
@@ -85,6 +144,8 @@ export default {
   /*transform: translateX(-16px);*/
   touch-action: none;
   user-select: none;
+  top: -16px;
+  left: -16px;
 }
 .color-bg {
   @apply rounded-full absolute top-1/2 w-full;
@@ -99,26 +160,5 @@ export default {
   z-index: 2;
   height: 8px;
   margin-top: -4px;
-}
-
-input {
-  @apply w-full rounded-full;
-  appearance: none;
-  height: 8px;
-  background-color: rgba(255, 255, 255, .3);
-}
-input::-webkit-slider-thumb{
-  @apply rounded-full w-5 h-5;
-  appearance: none;
-  border: 6px solid #FFD05D;
-  background: #1B1B1B;
-  z-index: 2;
-  position: relative;
-}
-input::-moz-range-thumb {
-  @apply rounded-full w-5 h-5 box-content;
-  appearance: none;
-  border: 6px solid #FFD05D;
-  background: #1B1B1B;
 }
 </style>
