@@ -4,10 +4,13 @@
     <div class="color-bg" />
     <div
       class="color-bar"
-      :style="{
-      width : `${offset}px`
-    }"
-    />
+    >
+      <span
+        :style="{
+          width: `${offset}px`
+        }"
+      />
+    </div>
     <div
       ref="thumb"
       class="handler"
@@ -49,6 +52,7 @@ export default {
   },
   data() {
     return {
+      value: 5,
       position: { x: 0, y: 0 },
       offset: 50,
       values: [3, 6, 9, 12, 15, 50],
@@ -59,6 +63,9 @@ export default {
     rangesModified() {
       const total = this.ranges.reduce((a, b) => a + b);
       return this.ranges.map((range) => ((range / total) * 100).toFixed(2));
+    },
+    ddd() {
+      return this.$refs.slider.offsetWidth;
     },
   },
   methods: {
@@ -100,7 +107,7 @@ export default {
       };
 
       const onMouseUp = () => {
-        this.handleMouseUp();
+        // this.handleMouseUp();
         document.removeEventListener('mouseup', onMouseUp);
         document.removeEventListener('mousemove', onMouseMove);
       };
@@ -148,7 +155,7 @@ export default {
   left: -16px;
 }
 .color-bg {
-  @apply rounded-full absolute top-1/2 w-full;
+  @apply absolute top-1/2 w-full rounded-full;
   z-index: 1;
   height: 8px;
   margin-top: -4px;
@@ -156,9 +163,25 @@ export default {
 }
 
 .color-bar {
-  @apply rounded-full bg-red-500 absolute top-1/2 w-1/2;
+  @apply absolute top-1/2 w-full;
   z-index: 2;
   height: 8px;
   margin-top: -4px;
+}
+
+.color-bar span{
+  @apply rounded-full block h-full;
+  /* this will do the magic */
+  mask:linear-gradient(#000 0 0);
+}
+
+.color-bar span:before {
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background-image: linear-gradient(to right, #FFD25F, #FF5C01);
 }
 </style>
