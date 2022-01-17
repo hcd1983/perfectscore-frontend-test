@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-2xl mx-auto">
+  <div class="max-w-2xl mx-auto px-5">
     <h1 class="text-white">Component</h1>
     <h2 class="text-white">Button</h2>
     <div>
@@ -27,7 +27,10 @@ import Slider from '@/components/Slider.vue';
 export default {
   name: 'Components',
   components: {
-    ButtonNormal, ButtonSmall, Input, Slider,
+    ButtonNormal,
+    ButtonSmall,
+    Input,
+    Slider,
   },
   data() {
     return {
