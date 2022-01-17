@@ -4,7 +4,7 @@
     <Input v-model="keyWord" />
     <div class="h2 text-white"># of results per page</div>
     <div class="h2 text-white">{{ keyWord }}</div>
-    <div>
+    <div class="text-white">
       <span>30</span> <span>result</span>
     </div>
     <slider v-model:value="perPage" />
@@ -27,7 +27,7 @@ export default {
   data() {
     return {
       perPage: 15,
-      keyWord: '123',
+      keyWord: '',
     };
   },
 };

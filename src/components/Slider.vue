@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="pt-4">
   <div
     class="slider-container"
     ref="slider"
@@ -32,11 +32,11 @@
     </div>
   </div>
   <div
-    class="scales w-full relative h-7"
+    class="scales w-full relative h-10"
   >
     <div
       v-for="(val, idx) in values" :key="idx"
-      class="absolute w-0 h-0 top-full flex items-center justify-center text-white z-10"
+      class="absolute w-0 bottom-0 flex items-center justify-center text-white z-10"
       :class="{
         'opacity-50' : this.value !== val
       }"
