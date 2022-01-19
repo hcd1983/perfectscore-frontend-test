@@ -27,7 +27,7 @@
     >
       <span
         @mousedown="handleMouseDown"
-        @touchstart="handleTouchStart"
+        @touchstart.passive="handleTouchStart"
       />
     </div>
   </div>
@@ -127,7 +127,6 @@ export default {
       document.addEventListener('mouseup', onMouseUp);
     },
     handleTouchStart(event) {
-      console.log('t-start');
       const { slider } = this.$refs;
       event.preventDefault(); // prevent selection start (browser action)
       const onTouchMove = (_event) => {

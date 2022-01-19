@@ -15,7 +15,7 @@
       to="/"
       class="mt-10 flex flex-col items-center"
     >
-      <Icon type="paper" class="mx-auto" :active="['home', 'search'].includes($route.name)" />
+      <Icon type="paper" :active="['home', 'search'].includes($route.name)" />
       <div
         class="text-white text-xs mt-0.5"
         :class="{invisible : !['home', 'search'].includes($route.name)}">
@@ -27,7 +27,7 @@
       v-slot="{ isActive }"
       class="mt-10 flex flex-col items-center"
     >
-      <Icon type="paper" class="mx-auto" :active="isActive" />
+      <Icon type="paper" :active="isActive" />
       <div class="text-white text-xs mt-0.5" :class="{invisible : !isActive}">Tags</div>
     </router-link>
   </div>
