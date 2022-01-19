@@ -1,15 +1,15 @@
 <template>
-<div class="flex flex-col h-full">
+<div class="flex flex-col h-full px-5">
   <div class="max-w-725px w-full mx-auto">
-    <h2 class="text-white">Results</h2>
+    <h2 class="text-white page-title">Results</h2>
   </div>
-  <div class="md:sticky md:top-0 flex-1 overflow-y-scroll mt-6">
+  <div class="flex-1 overflow-y-scroll mt-6 md:pb-10 md:sticky md:top-0 ">
     <div class="grid gap-10 md:grid-cols-3 max-w-725px mx-auto">
       <div
         v-for="({image, title, author, id}, idx) in posts"
         :key="`post-${id}`"
         :ref="setPostsRef"
-        class="opacity-30 transition-opacity duration-100"
+        class="opacity-30 transition-opacity duration-300"
       >
         <div class="image-container">
           <img
@@ -34,7 +34,7 @@
       </template>
     </div>
     <div class="max-w-725px mx-auto">
-      <div v-if="page < totalPages" class="mt-10 btn-container">
+      <div v-if="page < totalPages" class="mt-10">
         <ButtonNormal @click="handleMore">More</ButtonNormal>
       </div>
     </div>
@@ -50,7 +50,7 @@ export default {
   components: { ButtonNormal },
   data() {
     return {
-      pageSize: 50,
+      pageSize: 15,
       page: 1,
       keyword: null,
       posts: [],
@@ -60,6 +60,8 @@ export default {
     };
   },
   mounted() {
+    this.pageSize = Number(this.$route.query.pageSize || this.pageSize);
+    this.keyword = this.$route.query.keyword || null;
     this.getPosts();
   },
   beforeUpdate() {
@@ -125,12 +127,6 @@ export default {
   line-height: 1.5;
   color: #B2B2B2;
   letter-spacing: 0.37px;
-}
-
-@screen md {
-  .btn-container {
-    max-width: 345px;
-  }
 }
 
 </style>

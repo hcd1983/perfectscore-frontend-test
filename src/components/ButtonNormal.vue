@@ -17,5 +17,6 @@ div {
   hover:bg-transparent hover:text-white;
   padding: 11px 14px;
   border-radius: 4px;
+  max-width: 345px;
 }
 </style>
