@@ -14,6 +14,9 @@ module.exports = {
         ubuntu: ['Ubuntu', 'sans-serif'],
         'open-sans': ['Open Sans', 'sans-serif'],
       },
+      maxWidth: {
+        '725px': '725px',
+      }
     },
   },
   variants: {

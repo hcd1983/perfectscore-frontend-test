@@ -1,8 +1,10 @@
 <template>
 <div class="flex flex-col h-full">
-  <h2 class="text-white">Results</h2>
-  <div class="md:sticky md:top-0 flex-1 overflow-y-scroll mt-6 pb-10">
-    <div class="mt-6 grid gap-10 md:grid-cols-3">
+  <div class="max-w-725px w-full mx-auto">
+    <h2 class="text-white">Results</h2>
+  </div>
+  <div class="md:sticky md:top-0 flex-1 overflow-y-scroll mt-6">
+    <div class="grid gap-10 md:grid-cols-3 max-w-725px mx-auto">
       <div
         v-for="({image, title, author, id}, idx) in posts"
         :key="`post-${id}`"
@@ -48,7 +50,7 @@ export default {
     return {
       pageSize: 50,
       page: 1,
-      keyWord: '',
+      keyword: null,
       posts: [],
       postsRef: [],
       loading: false,
@@ -63,7 +65,7 @@ export default {
   },
   methods: {
     getPosts() {
-      const { page, pageSize } = this;
+      const { page, pageSize, keyword } = this;
       this.loading = true;
       return new Promise((resolve, reject) => {
         const options = {
@@ -72,11 +74,11 @@ export default {
           params: {
             page,
             pageSize,
+            keyword,
           },
         };
         this.axios(options).then((res) => {
           resolve(res);
-          console.log(res.data);
           this.loading = false;
           this.totalPages = res.data.totalPages;
           this.posts = [

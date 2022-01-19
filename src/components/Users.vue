@@ -36,7 +36,7 @@
     </div>
     <div
       ref="trigger"
-      class="w-full text-white"
+      class="text-white text-lg text-center animate-pulse"
     >
       {{ loading ? 'Loading...' : '' }}
     </div>

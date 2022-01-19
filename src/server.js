@@ -17,7 +17,7 @@ function makeServer({ environment = 'development' } = {}) {
       this.namespace = 'api';
 
       this.get('/posts', (schema, req) => {
-        const pool = schema.db.posts;
+        const pool = schema.db.posts.where((post) => post.keywords.includes('hall'));
         const page = parseInt(req.queryParams.page, 10) - 1 || 0;
         const total = pool.length;
         const pageSize = parseInt(req.queryParams.pageSize, 10) || 1;
@@ -47,6 +47,7 @@ function makeServer({ environment = 'development' } = {}) {
         };
       });
       this.get('/users/friends', (schema, req) => {
+        // const keyword = req.queryParams.keyword || '';
         const pool = schema.db.users.where({ isFollowing: true });
         const page = parseInt(req.queryParams.page, 10) - 1 || 0;
         const total = pool.length;
