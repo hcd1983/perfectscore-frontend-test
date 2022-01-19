@@ -1,9 +1,14 @@
 <template>
 <div class="flex flex-col h-full px-5">
   <div class="max-w-725px w-full mx-auto">
-    <h2 class="text-white page-title">Results</h2>
+    <h2 class="text-white page-title relative md:pl-1">
+      <span class="hidden md:flex absolute top-0 items-center h-full -left-9">
+        <Icon type="arrow" />
+      </span>
+      Results
+    </h2>
   </div>
-  <div class="flex-1 overflow-y-scroll mt-6 md:pb-10 md:sticky md:top-0 ">
+  <div class="flex-1 overflow-y-scroll mt-6 pb-10 md:sticky md:top-0 ">
     <div class="grid gap-10 md:grid-cols-3 max-w-725px mx-auto">
       <div
         v-for="({image, title, author, id}, idx) in posts"
@@ -44,10 +49,11 @@
 
 <script>
 import ButtonNormal from '../components/ButtonNormal.vue';
+import Icon from '../components/Icon.vue';
 
 export default {
   name: 'SearchResult',
-  components: { ButtonNormal },
+  components: { Icon, ButtonNormal },
   data() {
     return {
       pageSize: 15,

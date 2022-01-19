@@ -16,11 +16,12 @@
         <router-link
           to="/"
           v-slot="{ isActive }"
+          class="mr-50px"
         >
-          <Icon type="paper" class="mr-50px" :active="isActive"  />
+          <Icon type="paper" :active="isActive"  />
         </router-link>
         <router-link
-          to="/components"
+          to="/tags"
           v-slot="{ isActive }"
         >
           <Icon type="paper" :active="isActive"  />

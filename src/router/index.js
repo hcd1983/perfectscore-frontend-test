@@ -21,6 +21,14 @@ const routes = [
     },
   },
   {
+    path: '/tags',
+    name: 'tags',
+    components: {
+      default: () => import('../views/Tags.vue'),
+      users: Users,
+    },
+  },
+  {
     path: '/components',
     name: 'components',
     component: () => import('../views/Components.vue'),
