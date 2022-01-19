@@ -8,18 +8,18 @@
       Following
     </div>
   </div>
-  <div class="pt-8 px-4 grid grid-cols-1 gap-4">
+  <div class="pt-8 px-4 grid grid-cols-1 gap-4 text-white">
     <div v-if="!userData" class="text-white">Loading</div>
     <div
       v-else
-      v-for="{ id, name, username, avater, isFollowing } in userData.data"
+      v-for="{ id, name, username, avatar, isFollowing } in userData.data"
       :key="`followers-${id}`"
       class="py-0.5 flex items-center"
     >
       <div class="w-10 h-10 border-light-gray border rounded-md overflow-hidden">
         <img
           class="object-cover w-full h-full"
-          :src="avater"
+          :src="avatar"
           :alt="name" @error="handleImageError($event, id)"
         />
       </div>
@@ -38,6 +38,7 @@
 
 <script>
 import ButtonSmall from '@/components/ButtonSmall.vue';
+import { users } from '../fakeData';
 
 export default {
   name: 'Users',
@@ -48,6 +49,7 @@ export default {
       followersPage: 1,
       followers: null,
       following: null,
+      users,
     };
   },
   watch: {
@@ -63,11 +65,11 @@ export default {
     },
   },
   created() {
-    fetch('/api/users')
-      .then((res) => res.json())
-      .then((json) => {
-        console.log(json);
-      });
+    // fetch('/api/users')
+    //   .then((res) => res.json())
+    //   .then((json) => {
+    //     console.log(json);
+    //   });
   },
   computed: {
     userData() {
@@ -78,7 +80,7 @@ export default {
     async fetchFollowers() {
       console.log('fetchFollowers');
       const options = {
-        url: 'https://avl-frontend-exam.herokuapp.com/api/users/all',
+        url: '/api/users',
         method: 'GET',
         params: {
           page: 1,
@@ -87,7 +89,6 @@ export default {
       };
       try {
         const { data } = await this.axios(options);
-        console.log(data);
         this.followers = data;
       } catch (error) {
         // if I have time...
@@ -95,7 +96,7 @@ export default {
     },
     async fetchFollowing() {
       const options = {
-        url: 'https://avl-frontend-exam.herokuapp.com/api/users/friends',
+        url: '/api/users/friends',
         method: 'GET',
         params: {
           page: 1,
@@ -104,6 +105,7 @@ export default {
       };
       try {
         const { data } = await this.axios(options);
+        console.log('fff', data);
         this.following = data;
       } catch (error) {
         // if I have time...
