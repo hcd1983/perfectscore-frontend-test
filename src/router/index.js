@@ -1,16 +1,24 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
+import Users from '../views/Users.vue';
 
 const routes = [
   {
     path: '/',
     name: 'home',
     component: HomeView,
+    components: {
+      default: HomeView,
+      users: Users,
+    },
   },
   {
     path: '/search',
     name: 'search',
-    component: () => import('../views/SearchResult.vue'),
+    components: {
+      default: () => import('../views/SearchResult.vue'),
+      users: Users,
+    },
   },
   {
     path: '/components',

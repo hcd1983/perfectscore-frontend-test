@@ -1,44 +1,46 @@
 <template>
-<div class="user-list" ref="sideBar">
-  <div class="bg-dark sticky top-0 z-10 pt-8">
-    <div class="grid grid-cols-2">
-      <div class="tag" :class="{ active: tag === 'followers' }" @click="tag = 'followers'">
-        Followers
-      </div>
-      <div class="tag" :class="{ active: tag === 'following' }" @click="tag = 'following'">
-        Following
-      </div>
-    </div>
-  </div>
-  <div class="pt-8 px-4 grid grid-cols-1 gap-4 text-white">
-    <div v-if="!userData" class="text-white">Loading</div>
-    <div
-      v-else
-      v-for="{ id, name, username, avatar, isFollowing } in userData.data"
-      :key="`followers-${id}`"
-      class="py-0.5 flex items-center"
-    >
-      <div class="w-10 h-10 border-light-gray border rounded-md overflow-hidden">
-        <img
-          class="object-cover w-full h-full"
-          :src="avatar"
-          :alt="name" @error="handleImageError($event, id)"
-        />
-      </div>
-      <div class="text-white ml-4 flex-1">
-        <div>{{ name }}</div>
-        <div class="opacity-50 text-sm">@{{ username }}</div>
-      </div>
-      <div>
-        <ButtonSmall v-if="!isFollowing">Follow</ButtonSmall>
-        <ButtonSmall v-else type="contained">Following</ButtonSmall>
+<div class="hidden 2xl:block">
+  <div class="user-list" ref="sideBar">
+    <div class="bg-dark sticky top-0 z-10 pt-8">
+      <div class="grid grid-cols-2">
+        <div class="tag" :class="{ active: tag === 'followers' }" @click="tag = 'followers'">
+          Followers
+        </div>
+        <div class="tag" :class="{ active: tag === 'following' }" @click="tag = 'following'">
+          Following
+        </div>
       </div>
     </div>
-    <div
-      ref="trigger"
-      class="text-white text-lg text-center animate-pulse"
-    >
-      {{ loading ? 'Loading...' : '' }}
+    <div class="pt-8 px-4 grid grid-cols-1 gap-4 text-white">
+      <div v-if="!userData" class="text-white">Loading</div>
+      <div
+        v-else
+        v-for="{ id, name, username, avatar, isFollowing } in userData.data"
+        :key="`followers-${id}`"
+        class="py-0.5 flex items-center"
+      >
+        <div class="w-10 h-10 border-light-gray border rounded-md overflow-hidden">
+          <img
+            class="object-cover w-full h-full"
+            :src="avatar"
+            :alt="name" @error="handleImageError($event, id)"
+          />
+        </div>
+        <div class="text-white ml-4 flex-1">
+          <div>{{ name }}</div>
+          <div class="opacity-50 text-sm">@{{ username }}</div>
+        </div>
+        <div>
+          <ButtonSmall v-if="!isFollowing">Follow</ButtonSmall>
+          <ButtonSmall v-else type="contained">Following</ButtonSmall>
+        </div>
+      </div>
+      <div
+        ref="trigger"
+        class="text-white text-lg text-center animate-pulse"
+      >
+        {{ loading ? 'Loading...' : '' }}
+      </div>
     </div>
   </div>
 </div>
