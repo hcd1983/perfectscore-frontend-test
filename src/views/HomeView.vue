@@ -1,19 +1,40 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <h2 class="text-7xl text-red-700">Hi</h2>
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <div class="h2 text-white">Search</div>
+    <Input v-model="keyword" />
+    <div class="h2 text-white"># of results per page</div>
+    <div class="text-white">
+      <span>30</span> <span>result</span>
+    </div>
+    <slider v-model:value="pageSize" />
+    <ButtonNormal @click="handleSubmit">Search</ButtonNormal>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue';
+import ButtonNormal from '@/components/ButtonNormal.vue';
+import Input from '@/components/Input.vue';
+import Slider from '@/components/Slider.vue';
 
 export default {
   name: 'HomeView',
   components: {
-    HelloWorld,
+    ButtonNormal,
+    Input,
+    Slider,
+  },
+  data() {
+    return {
+      pageSize: 15,
+      keyword: '',
+    };
+  },
+  methods: {
+    handleSubmit() {
+      const { pageSize, keyword } = this;
+      console.log('submit');
+      this.$router.push({ name: 'search', query: { pageSize, keyword } });
+    },
   },
 };
 </script>
