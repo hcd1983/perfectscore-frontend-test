@@ -15,9 +15,10 @@ function makeServer({ environment = 'development' } = {}) {
     // },
     routes() {
       this.namespace = 'api';
-
       this.get('/posts', (schema, req) => {
-        const pool = schema.db.posts.where((post) => post.keywords.includes('hall'));
+        const keyword = req.queryParams.keyword || '';
+        const pool = keyword
+          ? schema.db.posts.where((post) => post.keywords.includes(keyword)) : schema.db.posts;
         const page = parseInt(req.queryParams.page, 10) - 1 || 0;
         const total = pool.length;
         const pageSize = parseInt(req.queryParams.pageSize, 10) || 1;

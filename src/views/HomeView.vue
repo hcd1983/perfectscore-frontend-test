@@ -1,12 +1,12 @@
 <template>
   <div>
     <div class="h2 text-white">Search</div>
-    <Input v-model="keyword" />
-    <div class="h2 text-white"># of results per page</div>
-    <div class="text-white">
-      <span>30</span> <span>result</span>
+    <Input class="mt-4" placeholder="keyword" v-model="keyword" />
+    <div class="h2 text-white mt-7"># of results per page</div>
+    <div class="text-white mt-4">
+      <span class="text-5xl mr-2.5 font-bold">{{ total }}</span> <span>result</span>
     </div>
-    <slider v-model:value="pageSize" />
+    <slider class="mt-5" v-model:value="pageSize" />
     <ButtonNormal @click="handleSubmit">Search</ButtonNormal>
   </div>
 </template>
@@ -27,12 +27,13 @@ export default {
     return {
       pageSize: 15,
       keyword: '',
+      total: 30,
+      loading: false,
     };
   },
   methods: {
     handleSubmit() {
       const { pageSize, keyword } = this;
-      console.log('submit');
       this.$router.push({ name: 'search', query: { pageSize, keyword } });
     },
   },

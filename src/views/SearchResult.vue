@@ -33,8 +33,10 @@
         </div>
       </template>
     </div>
-    <div v-if="page < totalPages" class="mt-10 btn-container">
-      <ButtonNormal @click="handleMore">More</ButtonNormal>
+    <div class="max-w-725px mx-auto">
+      <div v-if="page < totalPages" class="mt-10 btn-container">
+        <ButtonNormal @click="handleMore">More</ButtonNormal>
+      </div>
     </div>
   </div>
 </div>
