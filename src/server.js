@@ -24,7 +24,6 @@ function makeServer({ environment = 'development' } = {}) {
         const skip = page * pageSize;
         const data = pool.slice(skip, skip + pageSize);
         return {
-          skip,
           total,
           totalPages,
           pageSize,

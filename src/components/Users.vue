@@ -1,5 +1,5 @@
 <template>
-<div class="user-list">
+<div class="user-list" ref="sideBar">
   <div class="grid grid-cols-2">
     <div class="tag" :class="{ active: tag === 'followers' }" @click="tag = 'followers'">
       Followers
@@ -32,6 +32,12 @@
         <ButtonSmall v-else type="contained">Following</ButtonSmall>
       </div>
     </div>
+    <div
+      ref="trigger"
+      class="w-full text-white"
+    >
+      {{ loading ? 'Loading...' : '' }}
+    </div>
   </div>
 </div>
 </template>
@@ -46,69 +52,103 @@ export default {
   data() {
     return {
       tag: 'followers',
-      followersPage: 1,
+      pageSize: 15,
       followers: null,
       following: null,
+      followersPage: 1,
+      followingPage: 1,
+      loading: false,
       users,
     };
   },
-  watch: {
-    tag: {
-      immediate: true,
-      handler(newVal) {
-        if (newVal === 'followers') {
-          this.fetchFollowers();
-        } else {
-          this.fetchFollowing();
-        }
-      },
-    },
+  mounted() {
+    const { sideBar } = this.$refs;
+    Promise.all([this.getFollowers(1), this.getFollowing(1)]).then(([followers, following]) => {
+      this.followers = followers.data;
+      this.following = following.data;
+      sideBar.addEventListener('scroll', this.handleScroll);
+    });
   },
-  created() {
-    // fetch('/api/users')
-    //   .then((res) => res.json())
-    //   .then((json) => {
-    //     console.log(json);
-    //   });
+  beforeUnmount() {
+    const { sideBar } = this.$refs;
+    sideBar.removeEventListener('scroll', this.handleScroll);
   },
   computed: {
     userData() {
-      return this.tag === 'followers' ? this.followers : this.following;
+      return this.tag === 'followers'
+        ? {
+          ...this.followers,
+          page: this.followersPage,
+        } : {
+          ...this.following,
+          page: this.followingPage,
+        };
     },
   },
   methods: {
-    async fetchFollowers() {
-      console.log('fetchFollowers');
-      const options = {
-        url: '/api/users',
-        method: 'GET',
-        params: {
-          page: 1,
-          pageSize: 10,
-        },
-      };
-      try {
-        const { data } = await this.axios(options);
-        this.followers = data;
-      } catch (error) {
-        // if I have time...
-      }
+    getFollowers(page) {
+      return new Promise((resolve, reject) => {
+        const options = {
+          url: '/api/users',
+          method: 'GET',
+          params: {
+            page,
+            pageSize: this.pageSize,
+          },
+        };
+        this.axios(options).then((res) => {
+          resolve(res);
+        }).catch((error) => {
+          reject(error);
+        });
+      });
     },
-    async fetchFollowing() {
-      const options = {
-        url: '/api/users/friends',
-        method: 'GET',
-        params: {
-          page: 1,
-          pageSize: 10,
-        },
-      };
-      try {
-        const { data } = await this.axios(options);
-        console.log('fff', data);
-        this.following = data;
-      } catch (error) {
-        // if I have time...
+    getMoreFollowers() {
+      if (this.followersPage >= this.followers.totalPages) return;
+      this.followersPage += 1;
+      this.loading = true;
+      this.getFollowers(this.followersPage).then(({ data }) => {
+        this.loading = false;
+        this.followers = {
+          ...data,
+          data: [...this.followers.data, ...data.data],
+        };
+      });
+    },
+    getFollowing(page) {
+      return new Promise((resolve, reject) => {
+        const options = {
+          url: '/api/users/friends',
+          method: 'GET',
+          params: {
+            page,
+            pageSize: this.pageSize,
+          },
+        };
+        this.axios(options).then((res) => {
+          resolve(res);
+        }).catch((error) => {
+          reject(error);
+        });
+      });
+    },
+    getMoreFollowing() {
+      if (this.followingPage >= this.followers.totalPages) return;
+      this.followingPage += 1;
+      this.loading = true;
+      this.getFollowing(this.followingPage).then(({ data }) => {
+        this.loading = false;
+        this.following = {
+          ...data,
+          data: [...this.following.data, ...data.data],
+        };
+      });
+    },
+    handleScroll() {
+      const { trigger } = this.$refs;
+      if (trigger.getBoundingClientRect().top <= window.innerHeight) {
+        const triggerFunction = this.tag === 'followers' ? this.getMoreFollowers : this.getMoreFollowing;
+        triggerFunction();
       }
     },
     handleImageError(e, id) {
