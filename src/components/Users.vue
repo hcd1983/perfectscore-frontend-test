@@ -62,6 +62,13 @@ export default {
       },
     },
   },
+  created() {
+    fetch('/api/users')
+      .then((res) => res.json())
+      .then((json) => {
+        console.log(json);
+      });
+  },
   computed: {
     userData() {
       return this.tag === 'followers' ? this.followers : this.following;
@@ -69,6 +76,7 @@ export default {
   },
   methods: {
     async fetchFollowers() {
+      console.log('fetchFollowers');
       const options = {
         url: 'https://avl-frontend-exam.herokuapp.com/api/users/all',
         method: 'GET',
@@ -79,6 +87,7 @@ export default {
       };
       try {
         const { data } = await this.axios(options);
+        console.log(data);
         this.followers = data;
       } catch (error) {
         // if I have time...
