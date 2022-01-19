@@ -1,7 +1,7 @@
 <template>
-  <div class="flex">
+  <div class="flex flex-col md:flex-row h-screen overflow-y-auto overflow-x-hidden">
     <Header />
-    <div class="px-5 flex-1">
+    <div class="px-5 flex-1 pt-5">
       <router-view/>
     </div>
     <div class="hidden 2xl:block">

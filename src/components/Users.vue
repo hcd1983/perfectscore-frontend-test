@@ -1,11 +1,13 @@
 <template>
 <div class="user-list" ref="sideBar">
-  <div class="grid grid-cols-2">
-    <div class="tag" :class="{ active: tag === 'followers' }" @click="tag = 'followers'">
-      Followers
-    </div>
-    <div class="tag" :class="{ active: tag === 'following' }" @click="tag = 'following'">
-      Following
+  <div class="bg-dark sticky top-0 z-10 pt-8">
+    <div class="grid grid-cols-2">
+      <div class="tag" :class="{ active: tag === 'followers' }" @click="tag = 'followers'">
+        Followers
+      </div>
+      <div class="tag" :class="{ active: tag === 'following' }" @click="tag = 'following'">
+        Following
+      </div>
     </div>
   </div>
   <div class="pt-8 px-4 grid grid-cols-1 gap-4 text-white">
@@ -160,7 +162,7 @@ export default {
 
 <style scoped>
 .user-list {
-  @apply h-screen overflow-y-scroll pt-8;
+  @apply h-screen overflow-y-scroll sticky top-0;
   width: 375px;
 }
 .tag {

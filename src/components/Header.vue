@@ -24,7 +24,7 @@ export default {
 }
 
 .header{
-  @apply flex justify-start px-5 items-center;
+  @apply flex justify-start px-5 items-center flex-shrink-0;
   height: 70px;
 }
 </style>
