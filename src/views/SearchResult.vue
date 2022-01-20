@@ -1,7 +1,10 @@
 <template>
 <div class="flex flex-col h-full px-5">
   <div class="max-w-725px w-full mx-auto">
-    <h2 class="text-white page-title relative md:pl-1">
+    <h2
+      class="text-white page-title relative cursor-pointer md:pl-1"
+      @click="$router.go(-1)"
+    >
       <span class="hidden md:flex absolute top-0 items-center h-full -left-9">
         <Icon type="arrow" />
       </span>

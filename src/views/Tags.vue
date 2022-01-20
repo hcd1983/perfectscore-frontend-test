@@ -8,22 +8,11 @@
     <div class="flex-1 overflow-y-scroll mt-6 pb-10 md:sticky md:top-0 ">
       <div class="grid gap-10 md:grid-cols-3 max-w-845px mx-auto">
         <div
-          v-for="({image, title, author, id}, idx) in posts"
-          :key="`post-${id}`"
-          :ref="setPostsRef"
-          class="opacity-30 transition-opacity duration-300"
+          v-for="({id, name, count}) in tags"
+          :key="`tag-${id}`"
+          class="opacity-100 transition-opacity duration-300"
         >
-          <div class="image-container">
-            <img
-              :src="image"
-              class="absolute w-full h-full inset-0 object-cover bg-gray-600"
-              @load="handleImageOnLoad($event, idx)"
-            />
-          </div>
-          <div class="text-white pt-5">
-            <div class="post-title"> {{ title }}</div>
-            <div class="post-subtitle">by {{ author }}</div>
-          </div>
+          {{ name }} - {{ count }}
         </div>
         <template v-if="loading">
           <div v-for="({}, idx) in pageSize" :key="idx" class="placeholder animate-pulse">
@@ -35,47 +24,37 @@
           </div>
         </template>
       </div>
-      <div class="max-w-725px mx-auto">
-        <div v-if="page < totalPages" class="mt-10">
-          <ButtonNormal @click="handleMore">More</ButtonNormal>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script>
-import ButtonNormal from '../components/ButtonNormal.vue';
 
 export default {
   name: 'Tags',
-  components: { ButtonNormal },
   data() {
     return {
       pageSize: 15,
       page: 1,
       keyword: null,
-      posts: [],
-      postsRef: [],
+      tags: [],
       loading: false,
       totalPages: 0,
     };
   },
   mounted() {
-    this.pageSize = Number(this.$route.query.pageSize || this.pageSize);
-    this.keyword = this.$route.query.keyword || null;
-    this.getPosts();
+    this.getTags();
   },
   beforeUpdate() {
     this.postsRef = [];
   },
   methods: {
-    getPosts() {
+    getTags() {
       const { page, pageSize, keyword } = this;
       this.loading = true;
       return new Promise((resolve, reject) => {
         const options = {
-          url: '/api/posts',
+          url: '/api/tags',
           method: 'GET',
           params: {
             page,
@@ -87,18 +66,14 @@ export default {
           resolve(res);
           this.loading = false;
           this.totalPages = res.data.totalPages;
-          this.posts = [
-            ...this.posts,
+          this.tags = [
+            ...this.tags,
             ...res.data.data,
           ];
         }).catch((error) => {
           reject(error);
         });
       });
-    },
-    handleImageOnLoad(e, idx) {
-      // e.target.style.opacity = 1;
-      this.postsRef[idx].style.opacity = 1;
     },
     setPostsRef(el) {
       if (el) {
