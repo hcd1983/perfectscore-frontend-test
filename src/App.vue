@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col md:flex-row h-screen overflow-y-auto overflow-x-hidden">
     <Header />
-    <div class="flex-1 md:pt-24">
+    <div class="flex-1 md:pt-24 overflow-hidden">
       <router-view v-slot="{ Component }">
         <keep-alive include="HomeView,Tags">
           <component :is="Component" />

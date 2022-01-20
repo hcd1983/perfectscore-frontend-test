@@ -1,11 +1,11 @@
 <template>
-  <div ref="tags" class="flex flex-col h-full px-6">
-    <div class="max-w-846px w-full mx-auto">
+  <div ref="tags" class="flex flex-col h-full">
+    <div class="max-w-846px w-full mx-auto px-6">
       <h2 class="text-white page-title relative">
         Tags
       </h2>
     </div>
-    <div class="flex-1 overflow-y-scroll mt-6 pb-10 md:sticky md:top-0" ref="tagContent">
+    <div class="flex-1 overflow-y-scroll mt-6 pb-10 px-6 md:sticky md:top-0" ref="tagContent">
       <div
         class="tags-container max-w-846px mx-auto flex flex-wrap gap-x-6 gap-y-9 justify-between"
       >
@@ -63,7 +63,7 @@ export default {
   name: 'Tags',
   data() {
     return {
-      pageSize: 15,
+      pageSize: 12,
       page: 1,
       keyword: null,
       tags: [],
