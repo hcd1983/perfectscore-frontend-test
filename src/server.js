@@ -48,7 +48,7 @@ function makeServer({ environment = 'development' } = {}) {
           pageSize,
           data,
         };
-      });
+      }, { timing: 3000 });
       this.get('/users', (schema, req) => {
         const pool = schema.db.users;
         const page = parseInt(req.queryParams.page, 10) - 1 || 0;

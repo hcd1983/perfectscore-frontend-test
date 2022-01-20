@@ -9,7 +9,7 @@
       Home page
     </router-link>
   </div>
-  <div class="flex items-center h-full flex-col">
+  <div class="flex items-center h-full flex-col hidden md:block">
     <div class="logo">LOGO</div>
     <router-link
       to="/"

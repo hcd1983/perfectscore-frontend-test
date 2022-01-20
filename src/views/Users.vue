@@ -124,9 +124,6 @@ export default {
         triggerFunction();
       }
     },
-    handleImageError(e, id) {
-      e.target.src = `https://i.pravatar.cc/45?${id}`;
-    },
   },
 };
 </script>

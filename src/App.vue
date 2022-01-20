@@ -3,7 +3,7 @@
     <Header />
     <div class="flex-1 md:pt-24">
       <router-view v-slot="{ Component }">
-        <keep-alive include="HomeView">
+        <keep-alive include="HomeView,Tags">
           <component :is="Component" />
         </keep-alive>
       </router-view>

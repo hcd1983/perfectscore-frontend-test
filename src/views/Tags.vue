@@ -1,28 +1,57 @@
 <template>
-  <div class="flex flex-col h-full px-5">
-    <div class="max-w-845px w-full mx-auto">
+  <div ref="tags" class="flex flex-col h-full px-6">
+    <div class="max-w-846px w-full mx-auto">
       <h2 class="text-white page-title relative">
         Tags
       </h2>
     </div>
-    <div class="flex-1 overflow-y-scroll mt-6 pb-10 md:sticky md:top-0 ">
-      <div class="grid gap-10 md:grid-cols-3 max-w-845px mx-auto">
+    <div class="flex-1 overflow-y-scroll mt-6 pb-10 md:sticky md:top-0" ref="tagContent">
+      <div
+        class="tags-container max-w-846px mx-auto flex flex-wrap gap-x-6 gap-y-9 justify-between"
+      >
         <div
-          v-for="({id, name, count}) in tags"
+          v-for="({id, name, count}, idx) in tags"
           :key="`tag-${id}`"
-          class="opacity-100 transition-opacity duration-300"
+          class="tag transition-opacity duration-500 ease-in opacity-0"
+          :style="{
+            'transition-delay' : `${100 * (idx % pageSize) + 1}ms`
+          }"
         >
-          {{ name }} - {{ count }}
+          <div class="w-150px h-150px relative rounded-10px overflow-x-hidden px-2.5 py-3.5 flex">
+            <div class="absolute inset-0 bg-white opacity-6" />
+            <div
+              class="text-white border-4 border-white
+              rounded-lg self-end py-1 px-2.5 text-2xl max-w-full truncate"
+            >
+              {{ name }}
+            </div>
+          </div>
+          <div class="mt-2.5 w-150px">
+            <div class="text-white truncate">{{ name }}</div>
+            <div class="text-tag-gray text-xs">{{ count }} Results</div>
+          </div>
         </div>
         <template v-if="loading">
-          <div v-for="({}, idx) in pageSize" :key="idx" class="placeholder animate-pulse">
-            <div class="image-container bg-gray-700"/>
-            <div class="text-white pt-5">
-              <div class="post-title bg-gray-300 h-5 w-2/5 mb-1 rounded-sm" />
-              <div class="post-subtitle bg-gray-600 h-4 w-1/5 rounded-sm" />
+          <div
+            v-for="({}, idx) in pageSize"
+            :key="`placeholder-${idx}`"
+            class="animate-pulse"
+          >
+            <div class="w-150px h-150px relative rounded-10px overflow-x-hidden px-2.5 py-3.5 flex">
+              <div class="absolute inset-0 bg-white opacity-10" />
+            </div>
+            <div class="mt-2.5 w-150px">
+              <div class="text-white text-sm truncate h-6 bg-white w-2/3 opacity-30 rounded-md" />
+              <div class="bg-tag-gray w-1/3 h-5 mt-1 opacity-30 rounded-md"></div>
             </div>
           </div>
         </template>
+      </div>
+      <div
+        ref="trigger"
+        class="text-white text-lg text-center animate-pulse"
+      >
+        {{ loading ? 'Loading...' : '' }}
       </div>
     </div>
   </div>
@@ -43,10 +72,14 @@ export default {
     };
   },
   mounted() {
-    this.getTags();
+    const { tagContent } = this.$refs;
+    this.getTags().then(() => {
+      tagContent.addEventListener('scroll', this.handleScroll);
+    });
   },
-  beforeUpdate() {
-    this.postsRef = [];
+  beforeUnmount() {
+    const { tagContent } = this.$refs;
+    tagContent.removeEventListener('scroll', this.handleScroll);
   },
   methods: {
     getTags() {
@@ -70,6 +103,7 @@ export default {
             ...this.tags,
             ...res.data.data,
           ];
+          this.handleTagLoad();
         }).catch((error) => {
           reject(error);
         });
@@ -81,29 +115,42 @@ export default {
       }
     },
     handleMore() {
+      if (this.page >= this.totalPages) return;
       this.page += 1;
-      this.getPosts();
+      this.getTags();
+    },
+    handleTagLoad() {
+      this.$nextTick(() => {
+        const el = this.$refs.tags;
+        const tags = el.querySelectorAll('.tag');
+        setTimeout(() => {
+          for (let i = 0; i < tags.length; i += 1) {
+            tags[i].style.opacity = 1;
+          }
+        }, 100);
+      });
+    },
+    handleScroll() {
+      const { trigger } = this.$refs;
+      if (trigger.getBoundingClientRect().top <= window.innerHeight) {
+        this.handleMore();
+      }
     },
   },
 };
 </script>
 
 <style scoped>
-.image-container{
-  @apply w-full h-0 relative;
-  padding-top: 66.66%;
+.tags-container:after{
+  @apply flex-auto;
+  content: "";
 }
-.post-title{
-  @apply font-ubuntu;
-  font-size: 15px;
-  line-height: 1.5;
-  letter-spacing: 0.14px;
+.opacity-6 {
+  opacity: .06;
 }
-.post-subtitle {
-  @apply text-xs;
-  line-height: 1.5;
-  color: #B2B2B2;
-  letter-spacing: 0.37px;
+
+.rounded-10px {
+  border-radius: 10px;
 }
 
 </style>
