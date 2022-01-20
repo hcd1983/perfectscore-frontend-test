@@ -1,5 +1,5 @@
 import { createServer, Model } from 'miragejs';
-import { users, posts } from './fakeData';
+import { users, posts, tags } from './fakeData';
 
 function makeServer({ environment = 'development' } = {}) {
   const server = createServer({
@@ -8,6 +8,7 @@ function makeServer({ environment = 'development' } = {}) {
     models: {
       user: Model,
       post: Model,
+      tag: Model,
     },
     // seeds(_server) {
     //   _server.create('user', { name: 'Bob' });
@@ -32,6 +33,22 @@ function makeServer({ environment = 'development' } = {}) {
           data,
         };
       }, { timing: 2000 });
+
+      this.get('/tags', (schema, req) => {
+        const pool = schema.db.tags;
+        const page = parseInt(req.queryParams.page, 10) - 1 || 0;
+        const total = pool.length;
+        const pageSize = parseInt(req.queryParams.pageSize, 10) || 1;
+        const totalPages = Math.ceil(total / pageSize);
+        const skip = page * pageSize;
+        const data = pool.slice(skip, skip + pageSize);
+        return {
+          total,
+          totalPages,
+          pageSize,
+          data,
+        };
+      });
       this.get('/users', (schema, req) => {
         const pool = schema.db.users;
         const page = parseInt(req.queryParams.page, 10) - 1 || 0;
@@ -70,6 +87,7 @@ function makeServer({ environment = 'development' } = {}) {
   server.db.loadData({
     users,
     posts,
+    tags,
   });
 
   return server;
