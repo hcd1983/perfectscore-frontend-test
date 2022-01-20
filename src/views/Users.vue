@@ -118,6 +118,7 @@ export default {
       });
     },
     handleScroll() {
+      if (this.loading) return;
       const { trigger } = this.tag === 'followers' ? this.$refs.followersRef.$refs : this.$refs.followingRef.$refs;
       if (trigger.getBoundingClientRect().top <= window.innerHeight) {
         const triggerFunction = this.tag === 'followers' ? this.getMoreFollowers : this.getMoreFollowing;

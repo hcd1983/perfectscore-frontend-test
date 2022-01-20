@@ -2,7 +2,7 @@
   <div class="h-full flex flex-col justify-between md:max-w-725px md:mx-auto md:w-full">
     <div class="px-5 md:px-0">
       <div class="h2 text-white">Search</div>
-      <Input class="mt-4" placeholder="keyword" v-model="keyword" />
+      <Input class="mt-4" placeholder="keyword, 'hall', 'goal', 'income'..." v-model="keyword" />
       <div class="h2 text-white mt-7"># of results per page</div>
       <div class="text-white mt-4">
         <span class="text-5xl mr-2.5 font-bold">{{ total }}</span> <span>result</span>

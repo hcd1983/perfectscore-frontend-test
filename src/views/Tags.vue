@@ -131,6 +131,7 @@ export default {
       });
     },
     handleScroll() {
+      if (this.loading) return;
       const { trigger } = this.$refs;
       if (trigger.getBoundingClientRect().top <= window.innerHeight) {
         this.handleMore();
