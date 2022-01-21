@@ -69,6 +69,7 @@ export default {
       tags: [],
       loading: false,
       totalPages: 0,
+      debounceTimeOut: null,
     };
   },
   mounted() {
@@ -131,11 +132,21 @@ export default {
       });
     },
     handleScroll() {
-      if (this.loading) return;
-      const { trigger } = this.$refs;
-      if (trigger.getBoundingClientRect().top <= window.innerHeight) {
-        this.handleMore();
+      this.debounce(() => {
+        if (this.loading) return;
+        const { trigger } = this.$refs;
+        if (trigger.getBoundingClientRect().top <= window.innerHeight) {
+          this.handleMore();
+        }
+      });
+    },
+    debounce(method, delay = 1000) {
+      if (this.debounceTimeOut) {
+        clearTimeout(this.debounceTimeOut);
       }
+      this.debounceTimeOut = setTimeout(() => {
+        method();
+      }, delay);
     },
   },
 };
