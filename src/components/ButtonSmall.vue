@@ -1,7 +1,7 @@
 <template>
-  <div :class="{'contained' : type === 'contained' }">
+  <button :class="{'contained' : type === 'contained' }">
     <slot />
-  </div>
+  </button>
 </template>
 
 <script>
@@ -18,7 +18,7 @@ export default {
 };
 </script>
 <style scoped>
-div {
+button {
   @apply bg-transparent flex items-center justify-center w-max cursor-pointer
   font-open-sans font-semibold text-sm text-white font-bold
   border-solid border-white border rounded-full
@@ -26,13 +26,13 @@ div {
   padding: 8px 10px;
 }
 
-div.contained {
+botton.contained {
   @apply bg-white text-dark
   hover:bg-transparent hover:text-white;
   padding: 6px;
 }
 
-div.contained:hover {
+button.contained:hover {
   padding: 8px 10px;
 }
 </style>

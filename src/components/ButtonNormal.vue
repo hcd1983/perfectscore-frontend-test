@@ -1,7 +1,7 @@
 <template>
-<div>
+<button>
   <slot />
-</div>
+</button>
 </template>
 
 <script>
@@ -10,8 +10,8 @@ export default {
 };
 </script>
 <style scoped>
-div {
-  @apply text-sm bg-white text-dark flex items-center
+button {
+  @apply text-sm bg-white text-dark flex items-center block
   justify-center bg-white uppercase font-bold cursor-pointer
   border-solid border-white border
   hover:bg-transparent hover:text-white;
